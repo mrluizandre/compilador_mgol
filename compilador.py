@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 '''
 Univesidade Federal de Goiás
 Engenharia de Computação
@@ -8,10 +10,18 @@ ANALISADOR LÉXICO
 Desenvolvidor por
     Andre Luiz Cardoso da Costa
     João Paulo Pacheco Potenciano
+
+Como executar: (Passos testados no sistema Ubuntu Linux 16.04 atualizado)
+    python3 compilador.py fonte.mgol
+       / \        / \          / \
+        |          |            |Arquivo fonte a ser compilado
+        |          |
+        |          |Compilador desenvolvido
+        |
+        |Chama o interpretador python
 '''
 
-
-# -*- coding: utf-8 -*-
+import sys
 
 def busca(lista, chave, valor):
     for item in lista:
@@ -21,7 +31,6 @@ def busca(lista, chave, valor):
 
 class AnalisadorLexico():
 
-    ##################################### AUTOMATO
     def e_letra(caractere):
         return caractere in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     def e_numero(caractere):
@@ -140,11 +149,6 @@ class AnalisadorLexico():
       {'estado': 21, 'tipo': 'PT_V'},
     ]
 
-    estado = 0
-    palavra = ""
-
-    ##################################### AUTOMATO FIM
-
     tabela_de_simbolos = [
         {'token': 'inicio', 'lexema': 'inicio', 'tipo': ''},
         {'token': 'varinicio', 'lexema': 'varinicio', 'tipo': ''},
@@ -162,6 +166,8 @@ class AnalisadorLexico():
     ]
 
     analise_inicializada = False
+    estado = 0
+    palavra = ""
 
     def mostrar_tabela_de_simbolos(self):
         print('')
@@ -179,17 +185,26 @@ class AnalisadorLexico():
             self.tabela_de_simbolos.append({'token': token, 'lexema': lexema,'tipo': tipo})
         print("|{}|{}|{}|".format(token.center(15),lexema.center(30),tipo.center(10)))
 
-    def ler_arquivo(self):
+    def ler_arquivo(self,caminho):
         try:
-            arquivo_fonte = str(input('Informe o caminho do arquivo fonte:'))
-            self.arquivo = open(arquivo_fonte,'rb')
+            self.arquivo = open(caminho[1],'rb')
             print("Arquivo encontrado")
-            print(''.rjust(59,'-'))
+            print()
         except FileNotFoundError:
-            print(''.rjust(59,'-'))
-            print("Arquivo não encontrado. Verifique o caminho informado")
-            print(''.rjust(59,'-'))
-            self.ler_arquivo()
+            print("Algo deu errado.\n\"{}\" - Arquivo não encontrado. Verifique o caminho informado.".format(caminho[1]))
+            print()
+            sys.exit()
+        except IndexError:
+            print("Algo deu errado.\nInforme o arquivo como parametro ao chamar o compilador.")
+            print("Exemplo:\npython3 compilador.py fonte.mgol")
+            print("   / \        / \          / \\")
+            print("    |          |            |Arquivo fonte a ser compilado")
+            print("    |          |")
+            print("    |          |Compilador")
+            print("    |")
+            print("    |Chama o interpretador python")
+            print()
+            sys.exit()
 
     def e_final(self,estado):
         final = busca(self.estados_finais,'estado',estado)
@@ -270,9 +285,6 @@ class AnalisadorLexico():
             self.analisa_um_token()
 
     def inicializa_analise(self):
-        # lê arquivo
-        self.ler_arquivo()
-
         self.contador_linhas = 1;
         self.contador_caracteres = 0;
         self.caractere_atual = ":)"
@@ -282,16 +294,13 @@ class AnalisadorLexico():
         self.analise_inicializada = True
 
 def main():
-    analisador = AnalisadorLexico()
-
     print(''.rjust(59,'-'))
     print('|{}|'.format('ANALISADOR LÉXICO'.center(57)))
     print('|{}|'.format('Desenvolvido por André Costa e João Paulo Potenciano'.center(57,)))
     print(''.rjust(59,'-'))
-    # arquivo_fonte = str(input('Informe o nome do arquivo fonte:'))
-    print(''.rjust(59,'-'))
 
-    # print("ARQUIVO: {} encontrado.".format(str(arquivo_fonte)))
+    analisador = AnalisadorLexico()
+    analisador.ler_arquivo(sys.argv)
 
     analisador.op = ''
     while analisador.op != '0':
