@@ -280,7 +280,7 @@ class AnalisadorLexico():
                 self.adicionar_item_a_tabela_de_simbolos("ERRO","Erro encontrado")
                 print("Erro na linha {} coluna {} - {}\nMensagem: {}".format(
                     self.contador_linhas,
-                    self.contador_caracteres,
+                    self.contador_caracteres-1,
                     self.palavra,
                     busca(self.estados_nao_finais, 'estado',self.estado)['mensagem']))
                 sys.exit()
