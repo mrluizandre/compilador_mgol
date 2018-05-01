@@ -149,6 +149,15 @@ class AnalisadorLexico():
       {'estado': 21, 'tipo': 'PT_V'},
     ]
 
+
+    estados_nao_finais = [
+        {'estado': 2, 'mensagem': 'Número com formato inválido'},
+        {'estado': 4, 'mensagem': 'Número com formato inválido'},
+        {'estado': 5, 'mensagem': 'Número com formato inválido'},
+        {'estado': 7, 'mensagem': 'Literal com formato inválido'},
+        {'estado': 10, 'mensagem': 'Comentário com formato inválido'},
+    ]
+
     tabela_de_simbolos = [
         {'token': 'inicio', 'lexema': 'inicio', 'tipo': ''},
         {'token': 'varinicio', 'lexema': 'varinicio', 'tipo': ''},
@@ -268,11 +277,13 @@ class AnalisadorLexico():
             # volta 1 caractere ao caso de calabouço para reanalisá-lo
             self.arquivo.seek(-1,1)
             if not self.e_final(self.estado):
-                print("LINHA => {}".format(self.contador_linhas))
-                print("COLUNA => {}".format(self.contador_caracteres))
-                print("CONTEUDO: {}{}".format(self.palavra,self.arquivo.readline()))
                 self.adicionar_item_a_tabela_de_simbolos("ERRO","Erro encontrado")
-                self.op = '0'
+                print("Erro na linha {} coluna {} - {}\nMensagem: {}".format(
+                    self.contador_linhas,
+                    self.contador_caracteres,
+                    self.palavra,
+                    busca(self.estados_nao_finais, 'estado',self.estado)['mensagem']))
+                sys.exit()
             return True
 
     def analisa_um_token(self):
