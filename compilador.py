@@ -107,7 +107,7 @@ class AnalisadorLexico():
 
     tabela_de_estados = [
         [9,1,None,None,None,7,None,10,None,13,14,15,18,18,18,18,19,20,21,None,12,0,0,0],
-        [None,1,2,None,4,4,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
+        [None,1,2,4,4,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
         [None,3,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
         [None,3,None,4,4,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
         [None,6,None,None,None,None,None,None,None,None,None,None,5,5,None,None,None,None,None,None,None,None,None,None],
@@ -151,11 +151,12 @@ class AnalisadorLexico():
 
 
     estados_nao_finais = [
-        {'estado': 2, 'mensagem': 'Número com formato inválido'},
-        {'estado': 4, 'mensagem': 'Número com formato inválido'},
-        {'estado': 5, 'mensagem': 'Número com formato inválido'},
-        {'estado': 7, 'mensagem': 'Literal com formato inválido'},
-        {'estado': 10, 'mensagem': 'Comentário com formato inválido'},
+        {'estado': 0, 'mensagem': 'Caractere não é válido como primeiro caractere de numa palavra da linguagem'},
+        {'estado': 2, 'mensagem': 'Número com formato inválido - ponto não seguido por dígito'},
+        {'estado': 4, 'mensagem': 'Número com formato inválido - \"e\" não seguido por sinal ou dígito'},
+        {'estado': 5, 'mensagem': 'Número com formato inválido - sinal não seguito por dígito'},
+        {'estado': 7, 'mensagem': 'Literal com formato inválido - sem fechamento'},
+        {'estado': 10, 'mensagem': 'Comentário com formato inválido - sem fechamento'},
     ]
 
     tabela_de_simbolos = [
