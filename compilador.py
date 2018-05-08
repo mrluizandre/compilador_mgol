@@ -151,7 +151,7 @@ class AnalisadorLexico():
 
 
     estados_nao_finais = [
-        {'estado': 0, 'mensagem': 'Caractere não é válido como primeiro caractere de numa palavra da linguagem'},
+        {'estado': 0, 'mensagem': 'Caractere não é válido como primeiro caractere de uma palavra da linguagem'},
         {'estado': 2, 'mensagem': 'Número com formato inválido - ponto não seguido por dígito'},
         {'estado': 4, 'mensagem': 'Número com formato inválido - \"e\" não seguido por sinal ou dígito'},
         {'estado': 5, 'mensagem': 'Número com formato inválido - sinal não seguito por dígito'},
@@ -219,11 +219,7 @@ class AnalisadorLexico():
     def e_final(self,estado):
         final = busca(self.estados_finais,'estado',estado)
         if final:
-            if self.palavra == '\n':
-                self.adicionar_item_a_tabela_de_simbolos(final['tipo'],'Salto')
-            elif self.palavra == '\t':
-                self.adicionar_item_a_tabela_de_simbolos(final['tipo'],'Tab')
-            elif self.palavra in ['inicio','varinicio','varfim','escreva','leia','se','entao','senao','fimse','fim','literal','inteiro','real']:
+            if self.palavra in ['inicio','varinicio','varfim','escreva','leia','se','entao','senao','fimse','fim','literal','inteiro','real']:
                 self.adicionar_item_a_tabela_de_simbolos(self.palavra,self.palavra)
             else:
                 self.adicionar_item_a_tabela_de_simbolos(final['tipo'],self.palavra)
@@ -316,13 +312,11 @@ def main():
 
     analisador.op = ''
     while analisador.op != '0':
-        # print(''.rjust(59,'-'))
         print()
         print('1 - Mostrar tabela de símbolos')
         print('2 - Ler 1 token')
         print('3 - Ler arquivo completo')
         print('0 - Encerrar Analisador Léxico')
-        # print(''.rjust(59,'-'))
         print()
         analisador.op = str(input('Informe a ação desejada:'))
         print()
