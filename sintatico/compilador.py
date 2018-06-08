@@ -6,7 +6,7 @@ Engenharia de Computação
 Compiladores 1
 Professora: Déborah Fernandes
 
-ANALISADOR LÉXICO
+ANALISADOR LÉXICO e ANALISADOR SINTÁTICO
 Desenvolvidor por
     Andre Luiz Cardoso da Costa
     João Paulo Pacheco Potenciano
@@ -154,7 +154,6 @@ class AnalisadorLexico():
       {'estado': 20, 'tipo': 'FC_P'},
       {'estado': 21, 'tipo': 'PT_V'},
     ]
-
 
     estados_nao_finais = [
         {'estado': 0, 'mensagem': 'Caractere não é válido como primeiro caractere de uma palavra da linguagem'},
@@ -307,8 +306,6 @@ class AnalisadorLexico():
             condicao_de_parada = self.proximo_caractere()
         return condicao_de_parada
 
-
-
     def analisa_arquivo_completo(self):
         while self.caractere_atual != "":
             print(self.analisa_um_token())
@@ -340,7 +337,7 @@ class Pilha():
     def topo(self):
         return self.pilha[len(self.pilha)-1]
 
-    def vazia(self):
+    def sem_elementos(self):
         return len(self.pilha) == 0
 
     def print_reduce(self,n):
@@ -348,108 +345,132 @@ class Pilha():
         for i in range(0, n):
             if type(self.pilha[-n+i]) is str:
                 retorno += self.pilha[-n+i] + " "
-            if not self.vazia():
+            if not self.sem_elementos():
                 self.pilha.pop(-n+i)
         return retorno
 
-    def mostra_pilha(self):
-        print("PILHA {}".format(self.pilha))
-
 class AnalisadorSintatico():
     tabela_acao = [["s2",'erro0', 'erro0','erro0', 'erro0','erro0', 'erro0','erro0', 'erro0','erro0', 'erro0','erro0'],
-                    [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,"Acc"],
+                    ["Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc","Acc"],
                     ['erro2',"s4",'erro2','erro2','erro2','erro2','erro2','erro2','erro2','erro2','erro2','erro2','erro2','erro2','erro2','erro2','erro2','erro2','erro2','erro2','erro2','erro2'],
                     ['erro3','erro3','erro3','erro3',"s12",'erro3','erro3','erro3',"s10","s11",'erro3','erro3','erro3','erro3',"s14",'erro3','erro3','erro3','erro3','erro3',"s9",'erro3'],
                     ['erro4','erro4',"s17",'erro4',"s18",'erro4','erro4','erro4','erro4','erro4','erro4','erro4','erro4','erro4','erro4','erro4','erro4','erro4','erro4','erro4','erro4','erro4'],
-                    [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,"R2"],
+                    ['erro5','erro5','erro5','erro5','erro5','erro5','erro5','erro5','erro5','erro5','erro5','erro5','erro5','erro5','erro5','erro5','erro5','erro5','erro5','erro5','erro5',"R2"],
                     ['erro6','erro6','erro6','erro6',"s12",'erro6','erro6','erro6',"s10","s11",'erro6','erro6','erro6','erro6',"s14",'erro6','erro6','erro6','erro6','erro6',"s9",'erro6'],
                     ['erro7','erro7','erro7','erro7',"s12",'erro7','erro7','erro7',"s10","s11",'erro7','erro7','erro7','erro7',"s14",'erro7','erro7','erro7','erro7','erro7',"s9","R16"],
                     ['erro8','erro8','erro8','erro8',"s12",'erro8','erro8','erro8',"s10","s11",'erro8','erro8','erro8','erro8',"s14",'erro8','erro8','erro8','erro8','erro8',"s9",'erro8'],
-                    [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,"R30"],
+                    ['erro9','erro9','erro9','erro9','erro9','erro9','erro9','erro9','erro9','erro9','erro9','erro9','erro9','erro9','erro9','erro9','erro9','erro9','erro9','erro9','erro9',"R30"],
                     ['erro10','erro10','erro10','erro10',"s22",'erro10','erro10','erro10','erro10','erro10','erro10','erro10','erro10','erro10','erro10','erro10','erro10','erro10','erro10','erro10','erro10','erro10'],
                     ['erro11','erro11','erro11','erro11',"s26",'erro11','erro11','erro11','erro11','erro11',"s24","s25",'erro11','erro11','erro11','erro11','erro11','erro11','erro11','erro11','erro11','erro11'],
                     ['erro12','erro12','erro12','erro12','erro12','erro12','erro12','erro12','erro12','erro12','erro12','erro12',"s27",'erro12','erro12','erro12','erro12','erro12','erro12','erro12','erro12','erro12'],
                     ['erro13','erro13','erro13','erro13',"s12",'erro13','erro13','erro13',"s10","s11",'erro13','erro13','erro13','erro13',"s14",'erro13','erro13','erro13','erro13',"s32",'erro13','erro13'],
                     ['erro14','erro14','erro14','erro14','erro14','erro14','erro14','erro14','erro14','erro14','erro14','erro14','erro14','erro14','erro14',"s33",'erro14','erro14','erro14','erro14','erro14','erro14'],
-                    [None,None,None,None,"R3",None,None,None,"R3","R3",None,None,None,None,"R3",None,None,None,None,None,"R3",None],
+                    ['errr15','errr15','errr15','errr15',"R3",'errr15','errr15','errr15',"R3","R3",'errr15','errr15','errr15','errr15',"R3",'errr15','errr15','errr15','errr15','errr15',"R3",'errr15'],
                     ['erro16','erro16',"s17",'erro16',"s18",'erro16','erro16','erro16','erro16','erro16','erro16','erro16','erro16','erro16','erro16','erro16','erro16','erro16','erro16','erro16','erro16','erro16'],
                     ['erro17','erro17','erro17',"s35",'erro17','erro17','erro17','erro17','erro17','erro17','erro17','erro17','erro17','erro17','erro17','erro17','erro17','erro17','erro17','erro17','erro17','erro17'],
                     ['erro18','erro18','erro18','erro18','erro18',"s37","s38","s39",'erro18','erro18','erro18','erro18','erro18','erro18','erro18','erro18','erro18','erro18','erro18','erro18','erro18','erro18'],
-                    [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,"R10"],
-                    [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,"R16"],
-                    [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,"R22"],
+                    ['erro19','erro19','erro19','erro19','erro19','erro19','erro19','erro19','erro19','erro19','erro19','erro19','erro19','erro19','erro19','erro19','erro19','erro19','erro19','erro19','erro19',"R10"],
+                    ['erro20','erro20','erro20','erro20','erro20','erro20','erro20','erro20','erro20','erro20','erro20','erro20','erro20','erro20','erro20','erro20','erro20','erro20','erro20','erro20','erro20',"R16"],
+                    ['erro21','erro21','erro21','erro21','erro21','erro21','erro21','erro21','erro21','erro21','erro21','erro21','erro21','erro21','erro21','erro21','erro21','erro21','erro21','erro21','erro21',"R22"],
                     ['erro22','erro22','erro22',"s40",'erro22','erro22','erro22','erro22','erro22','erro22','erro22','erro22','erro22','erro22','erro22','erro22','erro22','erro22','erro22','erro22','erro22','erro22'],
                     ['erro23','erro23','erro23',"s41",'erro23','erro23','erro23','erro23','erro23','erro23','erro23','erro23','erro23','erro23','erro23','erro23','erro23','erro23','erro23','erro23','erro23','erro23'],
-                    [None,None,None,"R13",None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
-                    [None,None,None,"R14",None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
-                    [None,None,None,"R15",None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
+                    ['erro24','erro24','erro24',"R13",'erro24','erro24','erro24','erro24','erro24','erro24','erro24','erro24','erro24','erro24','erro24','erro24','erro24','erro24','erro24','erro24','erro24','erro24'],
+                    ['erro25','erro25','erro25',"R14",'erro25','erro25','erro25','erro25','erro25','erro25','erro25','erro25','erro25','erro25','erro25','erro25','erro25','erro25','erro25','erro25','erro25','erro25'],
+                    ['erro26','erro26','erro26',"R15",'erro26','erro26','erro26','erro26','erro26','erro26','erro26','erro26','erro26','erro26','erro26','erro26','erro26','erro26','erro26','erro26','erro26','erro26'],
                     ['erro27','erro27','erro27','erro27',"s44",'erro27','erro27','erro27','erro27','erro27','erro27',"s45",'erro27','erro27','erro27','erro27','erro27','erro27','erro27','erro27','erro27','erro27'],
-                    [None,None,None,None,"R23",None,None,None,"R23","R23",None,None,None,None,"R23",None,None,None,None,"R23","R23",None],
+                    ['erro28','erro28','erro28','erro28',"R23",'erro28','erro28','erro28',"R23","R23",'erro28','erro28','erro28','erro28',"R23",'erro28','erro28','erro28','erro28',"R23","R23",'erro28'],
                     ['erro29','erro29','erro29','erro29',"s12",'erro29','erro29','erro29',"s10","s11",'erro29','erro29','erro29','erro29',"s14",'erro29','erro29','erro29','erro29',"s32",'erro29','erro29'],
                     ['erro30','erro30','erro30','erro30',"s12",'erro30','erro30','erro30',"s10","s11",'erro30','erro30','erro30','erro30',"s14",'erro30','erro30','erro30','erro30',"s32",'erro30','erro30'],
                     ['erro31','erro31','erro31','erro31',"s12",'erro31','erro31','erro31',"s10","s11",'erro31','erro31','erro31','erro31',"s14",'erro31','erro31','erro31','erro31',"s32",'erro31','erro31'],
-                    [None,None,None,None,"R29",None,None,None,"R29","R29",None,None,None,None,"R29",None,None,None,None,"R29","R29",None],
+                    ['erro32','erro32','erro32','erro32',"R29",'erro32','erro32','erro32',"R29","R29",'erro32','erro32','erro32','erro32',"R29",'erro32','erro32','erro32','erro32',"R29","R29",'erro32'],
                     ['erro33','erro33','erro33','erro33',"s44",'erro33','erro33','erro33','erro33','erro33','erro33',"s45",'erro33','erro33','erro33','erro33','erro33','erro33','erro33','erro33','erro33','erro33'],
-                    [None,None,None,None,"R4",None,None,None,"R4","R4",None,None,None,None,"R4",None,None,None,None,None,"R4",None],
-                    [None,None,None,None,"R5",None,None,None,"R5","R5",None,None,None,None,"R5",None,None,None,None,None,"R5",None],
+                    ['erro34','erro34','erro34','erro34',"R4",'erro34','erro34','erro34',"R4","R4",'erro34','erro34','erro34','erro34',"R4",'erro34','erro34','erro34','erro34','erro34',"R4",'erro34'],
+                    ['erro35','erro35','erro35','erro35',"R5",'erro35','erro35','erro35',"R5","R5",'erro35','erro35','erro35','erro35',"R5",'erro35','erro35','erro35','erro35','erro35',"R5",'erro35'],
                     ['erro36','erro36','erro36',"s51",'erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36'],
-                    [None,None,None,"R7",None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
-                    [None,None,None,"R8",None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
-                    [None,None,None,"R9",None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
-                    [None,None,None,None,"R11",None,None,None,"R11","R11",None,None,None,None,"R11",None,None,None,None,"R11","R11",None],
-                    [None,None,None,None,"R12",None,None,None,"R12","R12",None,None,None,None,"R12",None,None,None,None,"R12","R12",None],
+                    ['erro37','erro37','erro37',"R7",'erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37'],
+                    ['errro38','errro38','errro38',"R8",'errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro28','errro28','errro28'],
+                    ['erro39','erro39','erro39',"R9",'erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39'],
+                    ['erro40','erro40','erro40','erro40',"R11",'erro40','erro40','erro40',"R11","R11",'erro40','erro40','erro40','erro40',"R11",'erro40','erro40','erro40','erro40',"R11","R11",'erro40'],
+                    ['erro41','erro41','erro41','erro41',"R12",'erro41','erro41','erro41',"R12","R12",'erro41','erro41','erro41','erro41',"R12",'erro41','erro41','erro41','erro41',"R12","R12",'erro41'],
                     ['erro42','erro42','erro42',"s52",'erro42','erro42','erro42','erro42','erro42','erro42','erro42','erro42','erro42','erro42','erro42','erro42','erro42','erro42','erro42','erro42','erro42','erro42'],
                     ['erro43','erro43','erro43',"R19",'erro43','erro43','erro43','erro43','erro43','erro43','erro43','erro43','erro43',"s53",'erro43','erro43','erro43','erro43','erro43','erro43','erro43','erro43'],
-                    [None,None,None,"R20",None,None,None,None,None,None,None,None,None,"R20",None,None,"R20",None,"R20",None,None,None],
-                    [None,None,None,"R21",None,None,None,None,None,None,None,None,None,"R21",None,None,"R21",None,"R21",None,None,None],
-                    [None,None,None,None,"R26",None,None,None,"R26","R26",None,None,None,None,"R26",None,None,None,None,"R26","R26",None],
-                    [None,None,None,None,"R27",None,None,None,"R27","R27",None,None,None,None,"R27",None,None,None,None,"R27","R27",None],
-                    [None,None,None,None,"R28",None,None,None,"R28","R28",None,None,None,None,"R28",None,None,None,None,"R28","R28",None],
+                    ['erro44','erro44','erro44',"R20",'erro44','erro44','erro44','erro44','erro44','erro44','erro44','erro44','erro44',"R20",'erro44','erro44',"R20",'erro44',"R20",'erro44','erro44','erro44'],
+                    ['erro45','erro45','erro45',"R21",'erro45','erro45','erro45','erro45','erro45','erro45','erro45','erro45','erro45',"R21",'erro45','erro45',"R21",'erro45',"R21",'erro45','erro45','erro45'],
+                    ['erro46','erro46','erro46','erro46',"R26",'erro46','erro46','erro46',"R26","R26",'erro46','erro46','erro46','erro46',"R26",'erro46','erro46','erro46','erro46',"R26","R26",'erro46'],
+                    ['erro47','erro47','erro47','erro47',"R27",'erro47','erro47','erro47',"R27","R27",'erro47','erro47','erro47','erro47',"R27",'erro47','erro47','erro47','erro47',"R27","R27",'erro47'],
+                    ['erro48','erro48','erro48','erro48',"R28",'erro48','erro48','erro48',"R28","R28",'erro48','erro48','erro48','erro48',"R28",'erro48','erro48','erro48','erro48',"R28","R28",'erro48'],
                     ['erro49','erro49','erro49','erro49','erro49','erro49','erro49','erro49','erro49','erro49','erro49','erro49','erro49','erro49','erro49','erro49',"s54",'erro49','erro49','erro49','erro49','erro49'],
                     ['erro50','erro50','erro50','erro50','erro50','erro50','erro50','erro50','erro50','erro50','erro50','erro50','erro50','erro50','erro50','erro50','erro50','erro50',"s55",'erro50','erro50','erro50'],
-                    [None,None,"R6",None,"R6",None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
-                    [None,None,None,None,"R17",None,None,None,"R17","R17",None,None,None,None,"R17",None,None,None,None,None,"R17",None],
+                    ['erro51','erro51',"R6",'erro51',"R6",'erro51','erro51','erro51','erro51','erro51','erro51','erro51','erro51','erro51','erro51','erro51','erro51','erro51','erro51','erro51','erro51','erro51'],
+                    ['erro52','erro52','erro52','erro52',"R17",'erro52','erro52','erro52',"R17","R17",'erro52','erro52','erro52','erro52',"R17",'erro52','erro52','erro52','erro52','erro52',"R17",'erro52'],
                     ['erro53','erro53','erro53','erro53',"s44",'erro53','erro53','erro53','erro53','erro53','erro53',"s45",'erro53','erro53','erro53','erro53','erro53','erro53','erro53','erro53','erro53','erro53'],
                     ['erro54','erro54','erro54','erro54','erro54','erro54','erro54','erro54','erro54','erro54','erro54','erro54','erro54','erro54','erro54','erro54','erro54',"s57",'erro54','erro54','erro54','erro54'],
                     ['erro55','erro55','erro55','erro55',"s44",'erro55','erro55','erro55','erro55','erro55','erro55',"s45",'erro55','erro55','erro55','erro55','erro55','erro55','erro55','erro55','erro55','erro55'],
-                    [None,None,None,"R18",None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
-                    [None,None,None,None,"R24",None,None,None,"R24","R24",None,None,None,None,"R24",None,None,None,None,"R24","R24",None],
-                    [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,"R25",None,None,None,None,None]]
+                    ['erro56','erro56','erro56',"R18",'erro56','erro56','erro56','erro56','erro56','erro56','erro56','erro56','erro56','erro56','erro56','erro56','erro56','erro56','erro56','erro56','erro56','erro56'],
+                    ['erro57','erro57','erro57','erro57',"R24",'erro57','erro57','erro57',"R24","R24",'erro57','erro57','erro57','erro57',"R24",'erro57','erro57','erro57','erro57',"R24","R24",'erro57'],
+                    ['erro58','erro58','erro58','erro58','erro58','erro58','erro58','erro58','erro58','erro58','erro58','erro58','erro58','erro58','erro58','erro58',"R25",'erro58','erro58','erro58','erro58','erro58']]
 
     erros = {
         'erro0': '"inicio" não encontrado',
         'erro2': '"varinicio" não encontrado',
         'erro3': '"fim", "leia", "escreva", "id" ou "se" não encontrado',
         'erro4': '"varfim" ou "id" não encontrado',
+        'erro5': 'erro5',
         'erro6': '"fim", "se", "escreva", "leia" ou "id" não encontrado',
         'erro7': '"fim", "se", "escreva", "leia" ou "id" não encontrado',
         'erro8': '"fim", "se", "escreva", "leia" ou "id" não encontrado',
+        'erro9': 'Caracteres inseridos após tag de fechamento "fim"',
         'erro10': '"id" não encontrado',
         'erro11': 'literal, número ou "id" não encontrado',
         'erro12': '"<-" não encontrado',
         'erro13': '"fimse", "leia", "escreva", "id" ou "se" não encontrado',
         'erro14': '"(" não encontrado',
+        'erro15': 'erro15',
         'erro16': '"varfim" ou "id" não encontrado',
         'erro17': '";" não encontrado',
         'erro18': '"int", "real" ou "lit" não encontrado',
+        'erro19': 'erro19',
+        'erro20': 'erro20',
+        'erro21': 'erro21',
         'erro22': '";" não encontrado',
         'erro23': '";" não encontrado',
+        'erro24': '";" não encontrado',
+        'erro25': 'erro25',
+        'erro26': '";" não encontrado',
         'erro27': '"id" ou "Num" não encontrado',
+        'erro28': 'erro28',
         'erro29': '"fimse", "escreva", "id" ou "se" não encontrado',
         'erro30': '"fimse", "escreva", "id" ou "se" não encontrado',
         'erro31': '"fimse", "escreva", "id" ou "se" não encontrado',
+        'erro32': 'Não válido após "fimse"',
         'erro33': '"id"  ou "Num" não encontrado',
+        'erro34': 'erro34',
+        'erro35': 'erro35',
         'erro36': '";" não encontrado',
+        'erro37': 'erro37',
+        'erro38': 'erro38',
+        'erro39': 'erro39',
+        'erro40': 'erro40',
+        'erro41': '";" não encontrado',
         'erro42': '";" não encontrado',
         'erro43': '"operador matemático" não encontrado',
+        'erro44': '";" não encontrado',
+        'erro45': '";" não encontrado',
+        'erro46': 'erro46',
+        'erro47': 'erro47',
+        'erro48': 'erro48',
         'erro49': '")" não encontrado',
         'erro50': '"opr relacional" não encontrado',
+        'erro51': 'erro51',
+        'erro52': 'Não válido após fechamento de atribuição',
         'erro53': '"id" ou "Num" não encontrado',
         'erro54': '"entao" não encontrado',
         'erro55': '"id" ou "Num" não encontrado',
-
-
+        'erro56': 'erro56',
+        'erro57': 'Não válido após "entao"',
+        'erro58': 'erro58',
     }
+
     tabela_trasicao = [[1,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
                         [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
                         [None,3,None,None,None,None,None,None,None,None,None,None,None,None,None],
@@ -510,7 +531,6 @@ class AnalisadorSintatico():
                         [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None],
                         [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None]
     ]
-
 
     terminais = {
         "inicio": 0,
@@ -587,9 +607,7 @@ class AnalisadorSintatico():
         30: [2, "A"]
     }
 
-
     def analisa(self):
-
         # Inicializa Sintático
         lexico = AnalisadorLexico()
         lexico.ler_arquivo(sys.argv)
@@ -620,11 +638,11 @@ class AnalisadorSintatico():
                 print("P' => P")
                 break;
             else:
+                print("")
                 print("ERRO SINTÁTICO: {}".format(self.erros[resposta_acao]))
                 print("LINHA: {}".format(lexico.get_linha()))
                 print("COLUNA: {}".format(lexico.get_coluna()))
                 break;
-
 
 def main():
     print(''.rjust(59,'-'))
@@ -632,14 +650,8 @@ def main():
     print('|{}|'.format('Desenvolvido por André Costa e João Paulo Potenciano'.center(57)))
     print(''.rjust(59,'-'))
 
-
-
     sintatico = AnalisadorSintatico()
     sintatico.analisa()
-
-
-
-    # while True: print(analisador.analisa_um_token())
 
 if __name__ == "__main__":
     main()
