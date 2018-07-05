@@ -35,6 +35,24 @@ def busca_completo(lista, elemento):
             return elemento
     return False
 
+def chamar_funcao_por_string(objeto, nome_funcao):
+    return getattr(objeto, nome_funcao)
+
+def is_int(s):
+    try:
+        x = int(s)
+        return True
+    except ValueError:
+        return False
+
+def is_float(s):
+    try:
+        x = float(s)
+        return True
+    except ValueError:
+        return False
+
+
 class AnalisadorLexico():
 
     def e_letra(caractere):
@@ -44,7 +62,7 @@ class AnalisadorLexico():
     def e_e(caractere):
         return caractere in 'eE'
     def e_caracterevalido(caractere):
-        return caractere in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.<>=+-*/(),:;?!#$%&|\\ "
+        return caractere in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.<>=+-*/(),:;?!#$%&|\\ \n"
     def e_ponto(caractere):
         return "." == caractere
     def e_aspas(caractere):
@@ -391,7 +409,7 @@ class AnalisadorSintatico():
                     ['erro35','erro35','erro35','erro35',"R5",'erro35','erro35','erro35',"R5","R5",'erro35','erro35','erro35','erro35',"R5",'erro35','erro35','erro35','erro35','erro35',"R5",'erro35'],
                     ['erro36','erro36','erro36',"s51",'erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36','erro36'],
                     ['erro37','erro37','erro37',"R7",'erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37','erro37'],
-                    ['errro38','errro38','errro38',"R8",'errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro38','errro28','errro28','errro28'],
+                    ['erro38','erro38','erro38',"R8",'erro38','erro38','erro38','erro38','erro38','erro38','erro38','erro38','erro38','erro38','erro38','erro38','erro38','erro38','erro38','erro38','erro38','erro38'],
                     ['erro39','erro39','erro39',"R9",'erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39','erro39'],
                     ['erro40','erro40','erro40','erro40',"R11",'erro40','erro40','erro40',"R11","R11",'erro40','erro40','erro40','erro40',"R11",'erro40','erro40','erro40','erro40',"R11","R11",'erro40'],
                     ['erro41','erro41','erro41','erro41',"R12",'erro41','erro41','erro41',"R12","R12",'erro41','erro41','erro41','erro41',"R12",'erro41','erro41','erro41','erro41',"R12","R12",'erro41'],
@@ -579,35 +597,36 @@ class AnalisadorSintatico():
     }
 
     numero_producoes = {
-        2: [6, "P"],
-        3: [4, "V"],
-        4: [4, "LV"],
-        5: [4, "LV"],
-        6: [6, "D"],
-        7: [2, "TIPO"],
-        8: [2, "TIPO"],
-        9: [2, "TIPO"],
-        10: [4, "A"],
-        11: [6, "ES"],
-        12: [6, "ES"],
-        13: [2, "ARG"],
-        14: [2, "ARG"],
-        15: [2, "ARG"],
-        16: [4, "A"],
-        17: [8, "CMD"],
-        18: [6, "LD"],
-        19: [2, "LD"],
-        20: [2, "OPRD"],
-        21: [2, "OPRD"],
-        22: [4, "A"],
-        23: [4, "COND"],
-        24: [10, "CABEÇALHO"],
-        25: [6, "EXP_R"],
-        26: [4, "CORPO"],
-        27: [4, "CORPO"],
-        28: [4, "CORPO"],
-        29: [2, "CORPO"],
-        30: [2, "A"]
+        # nº da regra : [número de itens a tirar da pilha, redição do lado direito, tem regra semântica],
+        2: [6, "P", False],
+        3: [4, "V", False],
+        4: [4, "LV", False],
+        5: [4, "LV", True],
+        6: [6, "D", True],
+        7: [2, "TIPO", True],
+        8: [2, "TIPO", True],
+        9: [2, "TIPO", True],
+        10: [4, "A", False],
+        11: [6, "ES", True],
+        12: [6, "ES", True],
+        13: [2, "ARG", True],
+        14: [2, "ARG", True],
+        15: [2, "ARG", True],
+        16: [4, "A", False],
+        17: [8, "CMD", True],
+        18: [6, "LD", True],
+        19: [2, "LD", True],
+        20: [2, "OPRD", True],
+        21: [2, "OPRD", True],
+        22: [4, "A", False],
+        23: [4, "COND", True],
+        24: [10, "CABEÇALHO", True],
+        25: [6, "EXP_R", True],
+        26: [4, "CORPO", False],
+        27: [4, "CORPO", False],
+        28: [4, "CORPO", False],
+        29: [2, "CORPO", False],
+        30: [2, "A", False]
     }
 
     def analisa(self):
@@ -615,6 +634,12 @@ class AnalisadorSintatico():
         lexico = AnalisadorLexico()
         lexico.ler_arquivo(sys.argv)
         lexico.inicializa_analise()
+
+
+        # Inicializa Semântico
+        semantico = AnalisadorSemantico(lexico)
+        print("\nAção semântica - inicializa escrita no arquivo de saída\n")
+
 
         # Inicializa pilha
         pilha = Pilha()
@@ -632,26 +657,208 @@ class AnalisadorSintatico():
                 token = lexico.analisa_um_token() #pega primeiro token
             elif(resposta_acao[0] == 'R'):
                 producao_numero = self.numero_producoes[int(resposta_acao[1:])]
-                print("{} => ".format(producao_numero[1]), end='')
-                print(pilha.print_reduce(producao_numero[0]))
+                producao = "{} => ".format(producao_numero[1]) + pilha.print_reduce(producao_numero[0])
+                print(producao)
                 topo = pilha.topo()
                 pilha.empilha(producao_numero[1]) #empilha produção
                 pilha.empilha(self.tabela_trasicao[topo][self.nao_terminais[producao_numero[1]]])
 
+                # verfica e chama semântico
+                if producao_numero[2]:
+                    numero_regra = resposta_acao[1:]
+
+                    print("Ação semântica - regra {}\n".format(numero_regra))
+                    chamar_funcao_por_string(semantico,'regra' + numero_regra)(producao)
+
+
             elif(resposta_acao == "Acc"):
                 print("P' => P")
+                semantico.fechar_arquivo()
+                print("\nAção semântica - finaliza escrita no arquivo de saída\n")
+                print()
+                print("Compilação comcluída com sucesso!")
+                print("Arquivo de saída => \"programa.c\"")
                 break;
             else:
                 print("")
-                print("RESPOSTA ACAO {}".format(resposta_acao))
                 print("ERRO SINTÁTICO: {}".format(self.erros[resposta_acao]))
                 print("LINHA: {}".format(lexico.get_linha()))
                 print("COLUNA: {}".format(lexico.get_coluna()))
                 break;
 
+class AnalisadorSemantico():
+
+    temp_tipo = ''
+    temp_arg = ''
+    temp_oprd = []
+    temp_ld = ''
+    temp_exp_r = ''
+    cont_variavel_t = 0
+    variaveis_t = []
+
+    def __init__(self, lexico):
+        self.lexico = lexico
+        self.arquivo = open('programa.c','w')
+        self.arquivo.write('#include <stdio.h>\n\n')
+        self.arquivo.write('typedef int bool;\n')
+        self.arquivo.write('typedef char lit[256];\n\n')
+        self.arquivo.write('void main(void)\n')
+        self.arquivo.write('{\n')
+        self.arquivo.write('/*----Variáveis temporárias----*/\n')
+
+    def fechar_arquivo(self):
+        self.arquivo.write("}")
+        self.arquivo.close() #fechar o arquivo
+
+
+        # gera as linhas de declaração das variáveis temporárias
+        vs_temp = ''
+        for item in self.variaveis_t:
+            vs_temp += "{} {};\n".format(item['tipo'], item['lexema'])
+        vs_temp += '/*-----------------------------*/\n'
+
+        #lê o arquivo antes de inserir as variáveis temporários como um array, 1 linha por item
+        arquivo = open('programa.c','r')
+        conteudo = arquivo.readlines()
+        arquivo.close()
+
+        #insere as declarações no array lido no item anterior
+        conteudo.insert(8,vs_temp)
+
+        #escreve o novo conteúdo já com as declarações
+        arquivo = open('programa.c','w')
+        conteudo = "".join(conteudo)
+        arquivo.write(conteudo)
+        arquivo.close()
+
+    def regra5(self, expressao = ''):
+        self.arquivo.write("\n\n\n")
+
+    def regra6(self, expressao = ''):
+        id_lexema = expressao.split()[2]
+        token = busca(self.lexico.tabela_de_simbolos, 'lexema',id_lexema)
+        self.lexico.adicionar_item_a_tabela_de_simbolos(token['token'], token['lexema'], self.temp_tipo)
+        self.arquivo.write("{} {};\n".format(self.temp_tipo,id_lexema))
+
+
+    def regra7(self, expressao = ''):
+        self.temp_tipo = expressao.split()[2]
+
+    def regra8(self, expressao = ''):
+        self.temp_tipo = 'double'
+
+    def regra9(self, expressao = ''):
+        self.temp_tipo = expressao.split()[2]
+
+    def regra11(self, expressao = ''):
+        id_lexema = expressao.split()[3]
+        token = busca(self.lexico.tabela_de_simbolos, 'lexema',id_lexema)
+
+        if token['tipo'] != '':
+            if token['tipo'] == 'lit':
+                self.arquivo.write("scanf(\"%s\", {});\n".format(token['lexema']))
+            if token['tipo'] == 'int':
+                self.arquivo.write("scanf(\"%d\", &{});\n".format(token['lexema']))
+            if token['tipo'] == 'real':
+                self.arquivo.write("scanf(\"%lf\", &{});\n".format(token['lexema']))
+        else:
+            self.mostrar_erro("Variável não declarada")
+
+    def regra12(self, expressao = ''):
+        # self.arquivo.write("printf({});\n".format(self.temp_arg))
+        token = busca(self.lexico.tabela_de_simbolos, 'lexema',self.temp_arg)
+        if token:
+            if token['tipo'] == 'double':
+                self.arquivo.write("printf(\"%lf\",{});\n".format(self.temp_arg))
+            elif token['tipo'] == 'int':
+                self.arquivo.write("printf(\"%d\",{});\n".format(self.temp_arg))
+        else:
+            self.arquivo.write("printf(\"%s\",{});\n".format(self.temp_arg))
+
+    def regra13(self, expressao = ''):
+        self.temp_arg = expressao.split(' => ')[1]
+
+    def regra14(self, expressao = ''):
+        self.temp_arg = expressao.split()[2]
+
+    def regra15(self, expressao = ''):
+        id_lexema = expressao.split()[2]
+        token = busca(self.lexico.tabela_de_simbolos, 'lexema',id_lexema)
+
+        if token['tipo'] != '':
+            self.temp_arg = token['lexema']
+        else:
+            self.mostrar_erro("Variável não declarada")
+
+    def regra17(self, expressao = ''):
+        id_lexema = expressao.split()[2]
+        token = busca(self.lexico.tabela_de_simbolos, 'lexema',id_lexema)
+
+        if token['tipo'] != '':
+            if token['tipo'] == self.temp_ld['tipo']:
+                self.arquivo.write("{} = {};\n".format(token['lexema'], self.temp_ld['lexema']))
+            else:
+                self.mostrar_erro("Tipos diferentes para atribuição")
+        else:
+            self.mostrar_erro("Variável não declarada")
+
+    def regra18(self, expressao = ''):
+        opm = expressao.split()[3]
+        oprd1 = self.temp_oprd.pop()
+        oprd2 = self.temp_oprd.pop()
+
+        if (oprd1['tipo'] == oprd2['tipo']) and oprd1['tipo'] != 'lit':
+            v = "T{}".format(self.cont_variavel_t)
+            self.cont_variavel_t+=1
+            self.temp_ld = {'tipo': oprd1['tipo'], 'lexema': v}
+            self.variaveis_t.append(self.temp_ld)
+            self.arquivo.write("{} = {} {} {};\n".format(v, oprd2['lexema'], opm, oprd1['lexema']))
+        else:
+            self.mostrar_erro("Operandos com tipos incompatíveis")
+
+    def regra19(self, expressao = ''):
+        self.temp_ld = self.temp_oprd.pop()
+
+    def regra20(self, expressao = ''):
+        id_lexema = expressao.split()[2]
+        token = busca(self.lexico.tabela_de_simbolos, 'lexema',id_lexema)
+
+        if token['tipo'] != '':
+            self.temp_oprd.append({'tipo': token['tipo'], 'lexema': token['lexema']})
+        else:
+            self.mostrar_erro("Variável não declarada")
+
+    def regra21(self, expressao = ''):
+        self.temp_oprd.append({'tipo': 'int' if is_int(expressao.split()[2]) else 'double', 'lexema': expressao.split()[2]})
+
+    def regra23(self, expressao = ''):
+        self.arquivo.write("}\n")
+
+    def regra24(self, expressao = ''):
+        self.arquivo.write("if({})".format(self.temp_exp_r)+"{\n")
+
+    def regra25(self, expressao = ''):
+        opr = expressao.split()[3]
+        oprd1 = self.temp_oprd.pop()
+        oprd2 = self.temp_oprd.pop()
+
+        if (oprd1['tipo'] == oprd2['tipo']) and oprd1['tipo'] != 'lit':
+            v = "T{}".format(self.cont_variavel_t)
+            self.cont_variavel_t+=1
+            self.variaveis_t.append({'tipo': 'bool', 'lexema': v})
+            self.temp_exp_r = v
+            self.arquivo.write("{} = {} {} {};\n".format(v, oprd2['lexema'], opr, oprd1['lexema']))
+        else:
+            self.mostrar_erro("Operandos com tipos incompatíveis")
+
+    def mostrar_erro(self,mensagem):
+        print("ERRO SEMÂNTICO: {}".format(mensagem))
+        print("LINHA: {}".format(self.lexico.get_linha()))
+        print("COLUNA: {}".format(self.lexico.get_coluna()))
+
 def main():
     print(''.rjust(59,'-'))
-    print('|{}|'.format('ANALISADOR SINTÁTICO'.center(57)))
+    print('|{}|'.format('COMPILADOR v1.0'.center(57)))
     print('|{}|'.format('Desenvolvido por André Costa e João Paulo Potenciano'.center(57)))
     print(''.rjust(59,'-'))
 
